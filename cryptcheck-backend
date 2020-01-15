@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+
+require 'cryptcheck'
+require 'json'
+require 'sinatra'
+
+set :bind, '0.0.0.0'
+set :port, 8888
+set :run, true
+
+::CryptCheck::Logger.level = :error
+
+ERR_TO_MSG = {
+    SocketError => "Socket error",
+    Errno::EADDRNOTAVAIL => "Address not available",
+    Errno::ECONNREFUSED => "Connection refused",
+    Errno::EHOSTUNREACH => "No route to host",
+    CryptCheck::Tls::Engine::Timeout => "CryptCheck timeout"
+}
+
+get '/https/:host' do |host|
+    content_type :json
+    begin
+        port = 443
+        result = ::CryptCheck::Tls::Https.analyze host, port
+        {"error" => false, "result" => result}.to_json
+    rescue StandardError => ex
+        err = ERR_TO_MSG[ex.class] or ex.class
+        {"error" => err, "message": ex.message}.to_json
+    end
+end
