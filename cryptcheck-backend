@@ -5,6 +5,7 @@ require 'bundler/setup'
 require 'cryptcheck'
 require 'json'
 require 'sinatra'
+require 'simpleidn'
 
 set :bind, '0.0.0.0'
 set :port, 8888
@@ -20,14 +21,55 @@ ERR_TO_MSG = {
     CryptCheck::Tls::Engine::Timeout => "CryptCheck timeout"
 }
 
-get '/https/:host' do |host|
+get '/https/:id.json' do |id|
+    # json output
     content_type :json
+
+    # get host and port
+    host, port = id.split ':'
+
+    # parse / check host
+    host = SimpleIDN.to_ascii host.downcase
+    if /[^a-zA-Z0-9.-]/ =~ host
+        status 400
+        return {"status"=> 400,
+                "error" => "Invalid host",
+                "message": host}.to_json
+    end
+
+    # parse / check port
+    if /[^0-9]/ =~ port
+        status 400
+        return {"status"=> 400,
+                "error" => "Invalid port",
+                "error_message": "#{port} is not a number" }.to_json
+    end
+    port ||= 443
+    port = port.to_i
+    unless (1..65535).include? port
+        status 400
+        return {"status"=> 400,
+                "error" => "Invalid port",
+                "error_message": port}.to_json
+    end
+
+    # run CryptCheck
+    t = Time.now.utc.strftime('%FT%T.%LZ')
     begin
-        port = 443
         result = ::CryptCheck::Tls::Https.analyze host, port
-        {"error" => false, "result" => result}.to_json
+        {"service" => "https",
+         "host" => host,
+         "pending" => false,
+         "result" => result,
+         "created_at" => t,
+         "updated_at" => t,
+         "args" => port
+        }.to_json
     rescue StandardError => ex
+        status 503
         err = ERR_TO_MSG[ex.class] or ex.class
-        {"error" => err, "message": ex.message}.to_json
+        {"status" => 503,
+         "error" => err,
+         "error_message": ex.message}.to_json
     end
 end

@@ -21,6 +21,8 @@ COPY . /cryptcheck-backend/
 FROM aeris22/cryptcheck AS server
 MAINTAINER Alexandre Flament <alex@al-f.net>
 
+RUN apk add --no-cache --update libstdc++
+
 ENV RAILS_ENV=production
 ENV SINATRA_ACTIVESUPPORT_WARNING false
 
