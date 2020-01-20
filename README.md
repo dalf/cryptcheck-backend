@@ -38,5 +38,5 @@ make docker-run
 
 Or
 ```sh
-docker run --rm -p 8888:8888 dalf/cryptcheck-backend:latest
+docker run --rm -p 7000:7000 dalf/cryptcheck-backend:latest
 ```

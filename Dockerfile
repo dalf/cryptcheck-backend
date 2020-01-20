@@ -29,4 +29,11 @@ ENV SINATRA_ACTIVESUPPORT_WARNING false
 WORKDIR /cryptcheck-backend/
 COPY --from=builder /cryptcheck-backend/ /cryptcheck-backend/
 
+EXPOSE 7000
+
 ENTRYPOINT ["/sbin/tini", "--", "/cryptcheck-backend/cryptcheck-backend"]
+
+LABEL org.label-schema.usage="https://github.com/dalf/cryptcheck-backend" \
+      org.opencontainers.image.title="cryptcheck-backend" \
+      org.opencontainers.image.source="git@github.com:dalf/cryptcheck-backend.git" \
+      org.opencontainers.image.documentation="https://github.com/dalf/cryptcheck-backend"

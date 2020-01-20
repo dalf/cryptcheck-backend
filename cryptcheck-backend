@@ -8,7 +8,7 @@ require 'sinatra'
 require 'simpleidn'
 
 set :bind, '0.0.0.0'
-set :port, 8888
+set :port, 7000
 set :run, true
 
 ::CryptCheck::Logger.level = :error
