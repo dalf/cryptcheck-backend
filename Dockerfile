@@ -1,4 +1,4 @@
-FROM aeris22/cryptcheck AS builder
+FROM dalf/cryptcheck:new-scoring AS builder
 MAINTAINER Alexandre Flament <alex@al-f.net>
 
 RUN apk add --update bash make gcc g++ libxml2-dev yaml-dev zlib-dev
