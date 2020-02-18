@@ -23,6 +23,10 @@ Result:
     ```json
     {"status":503,"error":"Address not available","error_message":"Address not available - connect(2) for [<ip>]:443"}
     ```
+* If the host don't have an IPv6 connectivity:
+    ```json
+    {"service":"https","host":"<host>","pending":false,"result":[{"hostname":"<host>","port":443,"error":"Network unreachable - connect(2) for [<ipv6>]:443"}],"created_at":"<timestamp>","updated_at":"<timestamp>","args":443}
+    ```
 
 # Build docker image
 
@@ -38,5 +42,5 @@ make docker-run
 
 Or
 ```sh
-docker run --rm -p 7000:7000 dalf/cryptcheck-backend:latest
+docker run --rm -p 7000:7000 dalf/cryptcheck-backend:latest -o 0.0.0.0
 ```

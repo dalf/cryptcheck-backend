@@ -7,7 +7,6 @@ require 'json'
 require 'sinatra'
 require 'simpleidn'
 
-set :bind, '0.0.0.0'
 set :port, 7000
 set :run, true
 
@@ -20,6 +19,10 @@ ERR_TO_MSG = {
     Errno::EHOSTUNREACH => "No route to host",
     CryptCheck::Tls::Engine::Timeout => "CryptCheck timeout"
 }
+
+get '/' do
+    ''
+end
 
 get '/https/:id.json' do |id|
     # json output
